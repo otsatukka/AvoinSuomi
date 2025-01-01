@@ -10,6 +10,11 @@ app.use(cors());
 // Serve static files from the Vue 'dist' directory
 app.use(express.static(path.join(__dirname, 'dist')));
 
+// Health Check Endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 app.get('/proxy', async (req, res) => {
     try {
       const targetUrl = req.query.url; // Get the URL from query parameters
@@ -34,7 +39,8 @@ app.get('/proxy', async (req, res) => {
       console.error('Error fetching data:', error);
       res.status(500).send(error.message);
     }
-  });
+});
+
 // Catch-all route to serve Vue's index.html file for all routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
