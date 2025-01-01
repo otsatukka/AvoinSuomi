@@ -3,7 +3,7 @@ services:
     name: AvoinSuomi
     env: node
     buildCommand: |
-      cd budjetinesitys && npm install && npm run build && cp -R dist/* ../budjetinesitysserveri/dist/
+      cd budjetinesitys && npm install && npm run build && cd ../budjetinesitysserveri && npm install && mkdir -p dist && cp -R ../budjetinesitys/dist/* dist/
     startCommand: node budjetinesitysserveri/server.js
     plan: free
     healthCheckPath: /health
