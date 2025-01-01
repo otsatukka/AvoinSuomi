@@ -1,8 +1,8 @@
 <template>
     <div id="fetch-data-component">
-      <button @click="fetchData">Fetch CSV Data</button>
+      <button @click="fetchData">Hae budjettidata</button>
       <div v-if="Object.keys(csvData).length">
-        <h2>CSV Files:</h2>
+        <h2>Haettu data:</h2>
         <ul>
           <li v-for="(file, name) in csvData" :key="name">{{ name }} - {{ file.length }} rows</li>
         </ul>
