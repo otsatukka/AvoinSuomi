@@ -53,15 +53,16 @@
       responseType: 'arraybuffer' // Ensure the response is an ArrayBuffer
     });
 
-    const decoder = new TextDecoder('utf-8');
+    const decoder = new TextDecoder('ISO-8859-1');
     const text = decoder.decode(new Uint8Array(csvResponse.data));
     
     Papa.parse(text, {
-      header: true,
-      complete: results => {
-        this.csvData[linkName] = results.data;
-      }
-    });
+  header: true,
+  encoding: "ISO-8859-1", // Explicitly set encoding
+  complete: results => {
+    this.csvData[linkName] = results.data;
+  }
+});
     }
     initially++;
     }

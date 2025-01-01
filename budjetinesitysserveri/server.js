@@ -27,14 +27,10 @@ app.get('/proxy', async (req, res) => {
       });
       const response = await axios.get(targetUrl, {
         httpsAgent: agent,
-        responseType: 'arraybuffer' // For handling binary data like CSV
+        responseType: 'arraybuffer', // For handling binary data like CSV
       });
-  
-      const decoder = new TextDecoder('utf-8');
-      const text = decoder.decode(new Uint8Array(response.data));
 
-      res.set('Content-Type', response.headers['content-type']); // Preserve the content type
-      res.send(text);
+      res.send(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
       res.status(500).send(error.message);

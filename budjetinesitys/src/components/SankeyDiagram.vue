@@ -87,12 +87,12 @@
         ...incomeData.map(d => ({
           source: datanodes.findIndex(node => node.name === d['Tulomomentin nimi']),
           target: datanodes.findIndex(node => node.name === "TheState"),
-          value: parseInt(d['M��r�raha'] || 0)
+          value: parseInt(d['Määräraha'] || 0)
         })),
         ...expenditureData.map(d => ({
           source: datanodes.findIndex(node => node.name === "TheState"),
           target: datanodes.findIndex(node => node.name === d['Menomomentin nimi']),
-          value: parseInt(d['M��r�raha'] || 0)
+          value: parseInt(d['Määräraha'] || 0)
         }))
       ];
 

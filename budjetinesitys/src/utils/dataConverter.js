@@ -27,7 +27,7 @@ export function convertCSVDataToNameValuePair(csvData)
       const IncomeDataWithValues = [
         ...incomeData.map(d => ({
           name: d['Tulomomentin nimi'],
-          value: parseInt(d['M��r�raha'] || 0)
+          value: parseInt(d['Määräraha'] || 0)
         }))
       ];
      // console.log('Income Data with values:', IncomeDataWithValues);
@@ -35,7 +35,7 @@ export function convertCSVDataToNameValuePair(csvData)
       const ExpenditureDataWithValues = [
         ...expenditureData.map(d => ({
           name: d['Menomomentin nimi'],
-          value: parseInt(d['M��r�raha'] || 0)
+          value: parseInt(d['Määräraha'] || 0)
         }))
       ];
       //console.log('Expenditure Data with values:', ExpenditureDataWithValues);
@@ -101,12 +101,12 @@ export function convertCsvDataToSankeyData(csvData) {
     ...incomeData.map(d => ({
       source: datanodes.findIndex(node => node.name === d['Tulomomentin nimi']),
       target: datanodes.findIndex(node => node.name === "TheState"),
-      value: parseInt(d['M��r�raha'] || 0)
+      value: parseInt(d['Määräraha'] || 0)
     })),
     ...expenditureData.map(d => ({
       source: datanodes.findIndex(node => node.name === "TheState"),
       target: datanodes.findIndex(node => node.name === d['Menomomentin nimi']),
-      value: parseInt(d['M��r�raha'] || 0)
+      value: parseInt(d['Määräraha'] || 0)
     }))
   ];
 
