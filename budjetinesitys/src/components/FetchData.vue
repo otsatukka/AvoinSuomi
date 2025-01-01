@@ -1,5 +1,7 @@
 <template>
     <div id="fetch-data-component">
+      <h1>Hae hallituksen esitys Suomen 2025 budjetista painamalla alla olevaa <i>Hae budjettidata</i>-nappia</h1>
+      <h3>Tiedot haetaan budjetti.vm.fi:n avoimen datan <a href="https://budjetti.vm.fi/indox/opendata/2025/tae/hallituksenEsitys/2025-tae-hallituksenEsitys.html">palvelusta</a></h3>
       <button @click="fetchData">Hae budjettidata</button>
       <div v-if="Object.keys(csvData).length">
         <h2>Haettu data:</h2>
@@ -24,6 +26,7 @@
     methods: {
         async fetchData() {
   try {
+    // Eri vaihtoehdot https://budjetti.vm.fi/opendata/opendata-csv.jsp
     const htmlResponse = await axios.get('/proxy', {
       params: { 
         url: 'https://budjetti.vm.fi/indox/opendata/2025/tae/hallituksenEsitys/2025-tae-hallituksenEsitys.html'

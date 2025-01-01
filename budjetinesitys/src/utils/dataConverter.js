@@ -1,3 +1,51 @@
+export function convertCSVDataToNameValuePair(csvData)
+{
+    if (Object.keys(csvData).length === 0) {
+        console.log("No CSV data available for Sankey diagram.");
+        return null;
+      }
+    
+      let incomeData = [];
+      let expenditureData = [];
+    
+      for (const [key, value] of Object.entries(csvData)) {
+        if (value.length > 0) {
+          const firstRow = value[0];
+          if (Object.keys(firstRow).some(col => col.toLowerCase().includes('tulomomentin'))) {
+            incomeData = incomeData.concat(value);
+          } else if (Object.keys(firstRow).some(col => col.toLowerCase().includes('menomomentin'))) {
+            expenditureData = expenditureData.concat(value);
+          } else {
+            console.warn(`CSV file ${key} does not match income or expenditure criteria.`);
+          }
+        } else {
+          console.warn(`CSV file ${key} is empty or has no data.`);
+        }
+      }
+    
+      //console.log('Income Data:', incomeData);
+      const IncomeDataWithValues = [
+        ...incomeData.map(d => ({
+          name: d['Tulomomentin nimi'],
+          value: parseInt(d['M��r�raha'] || 0)
+        }))
+      ];
+     // console.log('Income Data with values:', IncomeDataWithValues);
+      //console.log('Expenditure Data:', expenditureData);
+      const ExpenditureDataWithValues = [
+        ...expenditureData.map(d => ({
+          name: d['Menomomentin nimi'],
+          value: parseInt(d['M��r�raha'] || 0)
+        }))
+      ];
+      //console.log('Expenditure Data with values:', ExpenditureDataWithValues);
+      if (incomeData.length === 0 || expenditureData.length === 0) {
+        console.log("Missing either income or expenditure data.");
+        return null;
+      }
+      return { incomeDataOutput: IncomeDataWithValues, expenditureDataOutput: ExpenditureDataWithValues.filter(link => !isNaN(link.value) && link.value > 0) };
+}
+
 export function convertCsvDataToSankeyData(csvData) {
   if (Object.keys(csvData).length === 0) {
     console.log("No CSV data available for Sankey diagram.");
@@ -36,6 +84,7 @@ export function convertCsvDataToSankeyData(csvData) {
   // Create nodes for income, "TheState", and expenditure
   const incomeNodes = [...new Set(incomeData.map(d => d['Tulomomentin nimi']))];
   const expenditureNodes = [...new Set(expenditureData.map(d => d['Menomomentin nimi']))];
+ // console.log('Income nodes :', incomeNodes);
   let datanodes = [
     ...incomeNodes.map(name => ({ name })),
     { name: "TheState" },
@@ -44,7 +93,7 @@ export function convertCsvDataToSankeyData(csvData) {
   //console.log('Nodes before filtering:', datanodes);
   
   datanodes = datanodes.filter(node=> node.name != undefined)
-  console.log('Nodes after filtering :', datanodes);
+  //console.log('Nodes after filtering :', datanodes);
 
 
   // Create links from income to "TheState" and from "TheState" to expenditure
@@ -61,7 +110,7 @@ export function convertCsvDataToSankeyData(csvData) {
     }))
   ];
 
-console.log('Links before filtering:', links);
+//console.log('Links before filtering:', links);
 
   const nodesWithValues = datanodes.map((node, index) => {
     const incoming = links.filter(l => l.target === index).reduce((sum, link) => sum + link.value, 0);
@@ -71,6 +120,6 @@ console.log('Links before filtering:', links);
       value: Math.max(incoming, outgoing) // or sum them if that fits your data model
     };
   });
-  console.log('Links after filtering:', links.filter(link => !isNaN(link.value) && link.value > 0));
+ // console.log('Links after filtering:', links.filter(link => !isNaN(link.value) && link.value > 0));
   return { nodes: nodesWithValues, links: links.filter(link => !isNaN(link.value) && link.value > 0) };
 }
