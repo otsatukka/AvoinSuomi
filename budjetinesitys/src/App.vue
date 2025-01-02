@@ -1,6 +1,7 @@
 <template>
   <div>
     <FetchData ref="fetchDataComponent" @data-loaded="onDataLoaded"></FetchData>
+    <LoanData :data="dataAsNameAndValues" :debtByYear="debtByYear" v-if="dataAsNameAndValues"/>
     <DataHistogram :data="dataAsNameAndValues" v-if="dataAsNameAndValues"/>
     <h2 v-if="data">Sankey muodossa</h2>
     <SankeyControls :data="data" @remove-edge="removeEdge" v-if="data"/>
@@ -13,26 +14,19 @@ import FetchData from './components/FetchData.vue';
 import SankeyMain from "./components/SankeyMain.vue";
 import SankeyControls from "./components/SankeyControls.vue";
 import DataHistogram from "./components/Histogram/DataHistogram.vue"
+import LoanData from './components/LoanData.vue';
 import { convertCsvDataToSankeyData, convertCSVDataToNameValuePair } from './utils/dataConverter';
 
 export default {
   name: "App",
-  components: {FetchData, SankeyMain, SankeyControls, DataHistogram },
+  components: {LoanData, FetchData, SankeyMain, SankeyControls, DataHistogram },
   data: () => ({
     data: null,
     dataAsNameAndValues: null,
     edgeToRemove: null,
     csvData: {},
-    csvDataReady: false
+    debtByYear:  {},
   }),
-  // async mounted() {
-  //   const response = await fetch(
-  //     "https://raw.githubusercontent.com/ozlongblack/d3/master/energy.json"
-  //   );
-    
-  //   const monstdata = await response.json();
-  //   console.log(monstdata);
-  // },
   methods: {
     removeEdge(edge) {
       console.log(edge);
@@ -56,12 +50,12 @@ export default {
     onDataLoaded() {
       if (this.$refs.fetchDataComponent) {
         this.csvData = this.$refs.fetchDataComponent.csvData;
+        this.debtByYear = this.$refs.fetchDataComponent.debtByYear;
         //console.log('CSV data loaded:', this.csvData);
-        this.csvDataReady = true;
         this.data = convertCsvDataToSankeyData(this.csvData);
         this.dataAsNameAndValues = convertCSVDataToNameValuePair(this.csvData);
         //console.log('Converted data:', this.dataAsNameAndValues);
-       //console.log('Converted Sankey Data:',  this.data);
+        //console.log('Converted Sankey Data:',  this.data);
       }
     }
   }

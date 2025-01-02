@@ -1,8 +1,16 @@
 <template>
-  <h2>Tulot</h2>
-  <div id="histogram" ref="incomehistogram"></div>
-  <h2>Menot</h2>
-  <div id="expenditurehistogram" ref="expenditurehistogram"></div>
+  <div>
+    <div>
+      <h1>Budjetti</h1>
+      <label for="percent">Punainen pystyviiva osoittaa <a href="https://stat.fi/meta/kas/persentiili.html">persentiilin</a>, jonka vasemmalla puolella on sen mukainen määrä tuloja tai menoja. Muokkaa persentiiliin  arvoa:</label>
+      <input type="number" id="percent" v-model.number="percent" min="0" max="100" step="1">
+    </div>
+    <h2>Tulot {{ (kokonaistulot/1000000000).toFixed(2) }} miljardia €</h2>
+    <div id="histogram" ref="incomehistogram"></div>
+    <h2>Menot {{ (kokonaismenot/1000000000).toFixed(2) }} miljardia €</h2>
+    <div id="expenditurehistogram" ref="expenditurehistogram"></div>
+
+  </div>
 </template>
 
 <script>
@@ -16,7 +24,12 @@ props: {
 data: () => ({
   width: 3680,
   height: 400,
-  margins: {top: 20, right: 20, bottom: 651, left: 100}
+  margins: {top: 20, right: 20, bottom: 651, left: 100},
+  percent: 90, // Default to 90 percent
+  kokonaistulot: 0,
+  kokonaismenot: 0,
+  thresholdValue: 0,
+  cumulativeValue: 0
 }),
 mounted() {
   if (this.$refs.incomehistogram) {
@@ -58,13 +71,33 @@ methods: {
     // Rotate x-axis labels
     xAxis.selectAll("text")
       .style("text-anchor", "end")
-      .attr("dx", "-.8em")
-      .attr("dy", ".15em")
+      .attr("dx", "-0.8em")
+      .attr("dy", "-.65em")
       .attr("transform", "rotate(-90)");
 
     // Add Y axis
     svg.append("g")
       .call(d3.axisLeft(y));
+   
+    // Calculate cumulative sum for percentile line
+    let cumulativeSum = 0;
+    let thresholdValue = 0;
+    this.cumulativeValue = 0;
+    sortedData.forEach(d => {
+      cumulativeSum += d.value;
+      if (cumulativeSum / d3.sum(sortedData, e => e.value) * 100 <= this.percent) {
+        thresholdValue = d.value;
+        this.cumulativeValue += d.value
+      }
+    });
+    // Add vertical line for percentile
+    svg.append("line")
+      .attr("x1", 1+ x.bandwidth() + x(sortedData.find(d => d.value === thresholdValue)?.name || sortedData[0].name))
+      .attr("y1", 0)
+      .attr("x2", 1+x.bandwidth() + x(sortedData.find(d => d.value === thresholdValue)?.name || sortedData[0].name))
+      .attr("y2", this.height)
+      .attr("stroke", "red")
+      .attr("stroke-width", 2);
   },
   createHistogram() {
     const svg = d3.select(this.$refs.incomehistogram).html("").append("svg")
@@ -79,7 +112,7 @@ methods: {
       console.error("No data available to create histogram");
       return;
     }
-
+    this.kokonaistulot = d3.sum(data, d => d.value);
     this.createComponent(svg, data);
 
     const svgexp = d3.select(this.$refs.expenditurehistogram).html("").append("svg")
@@ -94,12 +127,20 @@ methods: {
       console.error("No expenditure data available to create histogram");
       return;
     }
-
-    this.createComponent(svgexp, expdata);
+    this.kokonaismenot = d3.sum(expdata, d => d.value);
+   this.createComponent(svgexp, expdata);
   }
 },
 watch: {
   data: {
+    deep: true,
+    immediate: true,
+    handler(data) {
+      if (!data) return;
+      this.createHistogram();
+    }
+  },
+  percent: {
     deep: true,
     immediate: true,
     handler(data) {
