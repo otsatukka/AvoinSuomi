@@ -1,7 +1,7 @@
 <template>
   <div>
     <FetchData ref="fetchDataComponent" @data-loaded="onDataLoaded"></FetchData>
-    <LoanData :data="dataAsNameAndValues" :debtByYear="debtByYear" v-if="dataAsNameAndValues"/>
+    <LoanData :data="dataAsNameAndValues" :debtByYear="debtByYear" :debtManagementByYear="debtManagementByYear" :keskimääräinenpalkka="keskimääräinenpalkka" :väestönmäärä="väestönmäärä" v-if="dataAsNameAndValues"/>
     <DataHistogram :data="dataAsNameAndValues" v-if="dataAsNameAndValues"/>
     <h2 v-if="data">Sankey muodossa</h2>
     <SankeyControls :data="data" @remove-edge="removeEdge" v-if="data"/>
@@ -26,6 +26,9 @@ export default {
     edgeToRemove: null,
     csvData: {},
     debtByYear:  {},
+    debtManagementByYear:  {},
+    väestönmäärä: 0,
+    keskimääräinenpalkka:0
   }),
   methods: {
     removeEdge(edge) {
@@ -51,6 +54,9 @@ export default {
       if (this.$refs.fetchDataComponent) {
         this.csvData = this.$refs.fetchDataComponent.csvData;
         this.debtByYear = this.$refs.fetchDataComponent.debtByYear;
+        this.debtManagementByYear = this.$refs.fetchDataComponent.debtManagementByYear;
+        this.väestönmäärä = this.$refs.fetchDataComponent.väestönmäärä;
+        this.keskimääräinenpalkka = this.$refs.fetchDataComponent.keskimääräinenpalkka
         //console.log('CSV data loaded:', this.csvData);
         this.data = convertCsvDataToSankeyData(this.csvData);
         this.dataAsNameAndValues = convertCSVDataToNameValuePair(this.csvData);

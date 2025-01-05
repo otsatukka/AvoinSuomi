@@ -1,7 +1,7 @@
 <template>
     <div id="fetch-data-component">
       <h1>Hae hallituksen esitys Suomen 2025 budjetista painamalla alla olevaa <i>Hae sivun data</i>-nappia</h1>
-      <h3>Tiedot haetaan budjetti.vm.fi:n avoimen datan <a href="https://budjetti.vm.fi/indox/opendata/2025/tae/hallituksenEsitys/2025-tae-hallituksenEsitys.html">palvelusta</a>. Sekä tutkihallintoa <a href="https://api.tutkihallintoa.fi/central-government-debt/v1/debt-and-gdp">palvelusta</a></h3>
+      <h3>Tiedot haetaan budjetti.vm.fi:n avoimen datan <a href="https://budjetti.vm.fi/indox/opendata/2025/tae/hallituksenEsitys/2025-tae-hallituksenEsitys.html">palvelusta</a>. Sekä tutkihallintoa <a href="https://api.tutkihallintoa.fi/central-government-debt/v1/debt-and-gdp">palvelusta</a>. Sekä tilastokeskuksen avoimesta rajapinnasta.</h3>
       <button @click="fetchData">Hae sivun data</button>
       <div v-if="Object.keys(csvData).length">
         <h2>Haettu data:</h2>
@@ -21,7 +21,10 @@
     data() {
       return {
         csvData: {}, // Dictionary to store link name and parsed CSV data
-        debtByYear: {}
+        debtByYear: {},
+        debtManagementByYear: {},
+        väestönmäärä: 0,
+        keskimääräinenpalkka: 0,
       };
     },
     methods: {
@@ -68,13 +71,50 @@
               const decoder = new TextDecoder('utf-8');
               const text = decoder.decode(new Uint8Array(debtResponse.data));
               // Parse the decoded text as JSON
-              const debtData = JSON.parse(text);
+              this.debtByYear = JSON.parse(text);
+
+              // Get debt management data
+              const debtManagementResponse = await axios.get('/proxy', {
+                params: { 
+                  url: "https://api.tutkihallintoa.fi/central-government-debt/v1/interest-expenses"
+                },
+                responseType: 'arraybuffer' // Ensure the response is an ArrayBuffer
+              });
+              const debtManagementText = decoder.decode(new Uint8Array(debtManagementResponse.data));
+              // Parse the decoded text as JSON
+              this.debtManagementByYear = JSON.parse(debtManagementText);
               
-              // Reduce the array to a dictionary where keys are years and values are debtInEuro
-              this.debtByYear = debtData.reduce((acc, item) => {
-                  acc[item.year] = item.debtInEuro;
-                  return acc;
-              }, {});
+
+
+              // Get debt management data
+              const väestönmäärähaku = await axios.get('/proxy', {
+                params: { 
+                  url: "https://pxdata.stat.fi:443/PxWeb/sq/1a731775-4a97-43ef-8e7c-dd883ec4c265"
+                },
+                responseType: 'arraybuffer' // Ensure the response is an ArrayBuffer
+              });
+            
+              const väestönmääräText = decoder.decode(new Uint8Array(väestönmäärähaku.data));
+
+              let jsonObject = JSON.parse(väestönmääräText);
+              this.väestönmäärä = jsonObject.data[0].values[0];
+        
+
+              // Keskimääräinen palkka
+              const keskimaarainenpalkkaHaku = await axios.get('/proxy', {
+                params: { 
+                  url: "https://pxdata.stat.fi:443/PxWeb/sq/c2f919e0-b8ad-4d0e-90d0-1e7642b35476"
+                },
+                responseType: 'arraybuffer' // Ensure the response is an ArrayBuffer
+              });
+              const keskimäärinenpalkkaText = decoder.decode(new Uint8Array(keskimaarainenpalkkaHaku.data));
+              jsonObject = JSON.parse(keskimäärinenpalkkaText);
+              let values = jsonObject.data.filter(item => item.key.includes("SSS")).map(item => parseFloat(item.values[0]));
+
+              // Calculate the average
+              let sum = values.reduce((acc, val) => acc + val, 0);
+              this.keskimääräinenpalkka = sum / values.length;
+
             this.$emit('data-loaded');
           } catch (error) {
             console.error('Error fetching or parsing CSV:', error);
