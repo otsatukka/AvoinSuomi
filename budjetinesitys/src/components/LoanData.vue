@@ -1,6 +1,7 @@
 <template>
     <div>
         <h1>Laina</h1>
+        <h3>Suomi:</h3>
         <p>Lainaa otetaan vuonna 2025 {{ (lainanmäärä/1000000000).toFixed(2) }} miljardia €</p>
         <p>Lainan hoitokulut vuonna {{viimeisinvuosiHoitokuluissa}} {{(lainahoitokulut/1000000000).toFixed(2)}} miljardia €</p>
         <p>Laina oli vuonna {{viimeisinvuosi}} {{(lainaeuroissa/1000000000).toFixed(2)}} miljardia €</p>
@@ -9,7 +10,7 @@
         <p>Suomalaisen keskimääräinen kuukausiansio {{(keskimääräinenpalkka).toFixed(2)}} €/kk</p>
         <p>Suomalaisia on {{(väestönmäärä/1000000).toFixed(2)}} miljoonaa </p>
 
-        <h2>Ruotsin arvot</h2>
+        <h3>Ruotsi:</h3>
         <p>Laina vuonna 2024 {{ (1126287000000/11.47/1000000000).toFixed(2)}} miljardia €  (krunun kurssi 11,47 per euro)</p>
         <p>Laina oli vuonna 2024 18% BKTsta</p>
         <p>Laina oli vuonna 2024 {{ (1126287000000/10850000/11.47).toFixed(2)}} € per asukas</p>
