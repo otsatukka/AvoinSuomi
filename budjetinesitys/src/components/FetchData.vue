@@ -86,7 +86,7 @@
               
 
 
-              // Get debt management data
+              // Get väestönmäärärdata
               const väestönmäärähaku = await axios.get('/proxy', {
                 params: { 
                   url: "https://pxdata.stat.fi:443/PxWeb/sq/1a731775-4a97-43ef-8e7c-dd883ec4c265"

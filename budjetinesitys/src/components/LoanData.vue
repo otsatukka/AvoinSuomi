@@ -16,7 +16,6 @@
         <p>Laina oli vuonna 2024 {{ (1126287000000/10850000/11.47).toFixed(2)}} € per asukas</p>
         <p>Ruotsalaisia on 10,85 miljoonaa </p>
         <p>Ruotsia koskeva data on haettu käsin <a href="https://www.riksgalden.se/en/statistics/statistics-regarding-swedens-central-government-debt/"> sivulta</a></p>
-
     </div>
   </template>
   
@@ -29,7 +28,7 @@
     debtByYear: Object,
     debtManagementByYear: Object,
     keskimääräinenpalkka: Number,
-    väestönmäärä: Number
+    väestönmäärä: String
   },
   data: () => ({
     lainanmäärä: 0,
