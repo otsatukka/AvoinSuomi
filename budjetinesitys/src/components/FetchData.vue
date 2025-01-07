@@ -25,6 +25,7 @@
         debtManagementByYear: {},
         väestönmäärä: 0,
         keskimääräinenpalkka: 0,
+        bktData: {}
       };
     },
     methods: {
@@ -114,6 +115,32 @@
               // Calculate the average
               let sum = values.reduce((acc, val) => acc + val, 0);
               this.keskimääräinenpalkka = sum / values.length;
+
+              //BKT
+              const bktHaku = await axios.get('/proxy', {
+                params: { 
+                  //url: "https://pxdata.stat.fi:443/PxWeb/sq/77a91487-11bd-4163-91f6-2be9d435ddb4"
+                  url: "https://pxdata.stat.fi:443/PxWeb/sq/91b90ee2-dbdc-4d29-80f9-72fe6856fd13"
+                },
+                responseType: 'arraybuffer' // Ensure the response is an ArrayBuffer
+              });
+              const bktText = decoder.decode(new Uint8Array(bktHaku.data));
+              jsonObject = JSON.parse(bktText);
+              this.bktData = Object.entries(
+                          jsonObject.data
+                            .filter(item => item.key[0] === "B1GMH")
+                            .reduce((acc, item) => {
+                              acc[item.key[1]] = parseFloat(item.values[0]);
+                              return acc;
+                            }, {})
+                        ).map(([year, value]) => ({ 
+                          year: parseInt(year), 
+                          value 
+                        }));
+
+                console.log(this.bktData);
+
+              
 
             this.$emit('data-loaded');
           } catch (error) {

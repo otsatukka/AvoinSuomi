@@ -3,6 +3,7 @@
     <FetchData ref="fetchDataComponent" @data-loaded="onDataLoaded"></FetchData>
     <LoanData :data="dataAsNameAndValues" :debtByYear="debtByYear" :debtManagementByYear="debtManagementByYear" :keskimääräinenpalkka="keskimääräinenpalkka" :väestönmäärä="väestönmäärä" v-if="dataAsNameAndValues"/>
     <LineChart :data="debtManagementByYear"  v-if="dataAsNameAndValues"/>
+    <BKTLineChart :data="bktData" v-if="dataAsNameAndValues" />
     <DataHistogram :data="dataAsNameAndValues" v-if="dataAsNameAndValues"/>
     <h2 v-if="data">Sankey muodossa</h2>
     <SankeyControls :data="data" @remove-edge="removeEdge" v-if="data"/>
@@ -17,20 +18,22 @@ import SankeyControls from "./components/SankeyControls.vue";
 import DataHistogram from "./components/Histogram/DataHistogram.vue"
 import LoanData from './components/LoanData.vue';
 import LineChart from './components/LineChart/DebtManagementLineChart.vue'
+import BKTLineChart from './components/LineChart/BKTLineChart.vue'
 import { convertCsvDataToSankeyData, convertCSVDataToNameValuePair } from './utils/dataConverter';
 
 export default {
   name: "App",
-  components: {LineChart, LoanData, FetchData, SankeyMain, SankeyControls, DataHistogram },
+  components: {BKTLineChart, LineChart, LoanData, FetchData, SankeyMain, SankeyControls, DataHistogram },
   data: () => ({
     data: null,
     dataAsNameAndValues: null,
     edgeToRemove: null,
     csvData: {},
-    debtByYear:  {},
-    debtManagementByYear:  {},
+    debtByYear: {},
+    debtManagementByYear: {},
     väestönmäärä: 0,
-    keskimääräinenpalkka:0
+    keskimääräinenpalkka: 0,
+    bktData: {},
   }),
   methods: {
     removeEdge(edge) {
@@ -59,6 +62,7 @@ export default {
         this.debtManagementByYear = this.$refs.fetchDataComponent.debtManagementByYear;
         this.väestönmäärä = this.$refs.fetchDataComponent.väestönmäärä;
         this.keskimääräinenpalkka = this.$refs.fetchDataComponent.keskimääräinenpalkka
+        this.bktData = this.$refs.fetchDataComponent.bktData
         //console.log('CSV data loaded:', this.csvData);
         this.data = convertCsvDataToSankeyData(this.csvData);
         this.dataAsNameAndValues = convertCSVDataToNameValuePair(this.csvData);

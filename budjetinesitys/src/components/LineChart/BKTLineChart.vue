@@ -1,23 +1,23 @@
 <template>
-    <div>
-      <h2>Lainanhoitokulut</h2>
-      <div id="chart" ref="linechart">
-      </div>
-    </div> 
-  </template>
+  <div>
+    <h2>Bruttokansantuote</h2>
+    <div id="chart" ref="linechart">
+    </div>
+  </div>
+</template>
   
   <script>
 import * as d3 from 'd3';
   
   export default {
-    name: 'LineChart',
+    name: 'BKTLineChart',
     props: {
       data: Object
     },
     data: () => ({
         width: 800,
         height: 400,
-        margins: { top: 20, right: 20, bottom: 30, left: 50 }
+        margins: { top: 20, right: 50, bottom: 30, left: 50 }
     }),
     mounted() {
       if (this.$refs.linechart) {
@@ -40,7 +40,7 @@ import * as d3 from 'd3';
           .range([0, this.width]);
   
         const y = d3.scaleLinear()
-          .domain([0, d3.max(this.data, d => d.year<=2003 ? d.interestExpenses/6: d.interestExpenses)])
+          .domain([0, d3.max(this.data, d => d.value)])
           .range([this.height, 0]);
   
         // Add X axis
@@ -50,7 +50,7 @@ import * as d3 from 'd3';
   
         // Add Y axis
         svg.append('g')
-          .call(d3.axisLeft(y).tickFormat(d => parseFloat(d / 1e6).toFixed(1) + 'M'));
+          .call(d3.axisLeft(y).tickFormat(d => parseFloat(d)));
   
         // Add the line
         svg.append('path')
@@ -60,7 +60,7 @@ import * as d3 from 'd3';
           .attr('stroke-width', 1.5)
           .attr('d', d3.line()
             .x(d => x(d.year))
-            .y(d => y(d.year<=2003 ? d.interestExpenses/6: d.interestExpenses))
+            .y(d => y(d.value))
           );
   
         // Add labels if needed
