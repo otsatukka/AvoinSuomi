@@ -25,7 +25,8 @@
         debtManagementByYear: {},
         väestönmäärä: 0,
         keskimääräinenpalkka: 0,
-        bktData: {}
+        bktData: {},
+        työttömyysData: {}
       };
     },
     methods: {
@@ -134,11 +135,37 @@
                               return acc;
                             }, {})
                         ).map(([year, value]) => ({ 
-                          year: parseInt(year), 
+                          year: new Date(year), 
                           value 
                         }));
 
-                console.log(this.bktData);
+                       // console.log(this.bktData)
+
+             //Työttömyys
+              const työttömyysHaku = await axios.get('/proxy', {
+                params: { 
+                  url: "https://pxdata.stat.fi:443/PxWeb/sq/d98712a4-c3bb-4b34-a65d-d58cf98d272a"
+                },
+                responseType: 'arraybuffer' // Ensure the response is an ArrayBuffer
+              });
+              const työttömyysText = decoder.decode(new Uint8Array(työttömyysHaku.data));
+              jsonObject = JSON.parse(työttömyysText);
+              this.työttömyysData = Object.entries(
+                        jsonObject.data
+                          .reduce((acc, item) => {
+                            acc[item.key] = parseFloat(item.values);
+                            return acc;
+                          }, {})
+                      ).map(([key, value]) => {
+                        const year = parseInt(key.slice(0, 4));
+                        const month = parseInt(key.slice(5, 7)) - 1; // Month is zero-indexed in JavaScript Date
+                        return { 
+                          year: new Date(year, month), 
+                          value 
+                        };
+                      });
+             // console.log(this.työttömyysData)
+                        
 
               
 
