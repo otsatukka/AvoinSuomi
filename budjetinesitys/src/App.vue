@@ -5,6 +5,8 @@
     <DebtManagementLineChart :data="debtManagementByYear"  v-if="dataAsNameAndValues"/>
     <LineChart :data="bktData"  :title="'Bruttokansantuote euroissa'" v-if="dataAsNameAndValues" />
     <LineChart :data="työttömyysData" :title="'Työttömyysaste prosenteissa'" v-if="dataAsNameAndValues" />
+    <LineChart :data="kuluttajaIndeksiData" :title="'Kuluttajahintaindeksi'" v-if="dataAsNameAndValues" />    
+    <LineChart :data="työpaikatjulkisellaData" :title="'Työpaikat julkisella'" v-if="dataAsNameAndValues" />    
     <DataHistogram :data="dataAsNameAndValues" v-if="dataAsNameAndValues"/>
     <h2 v-if="data">Sankey muodossa</h2>
     <SankeyControls :data="data" @remove-edge="removeEdge" v-if="data"/>
@@ -35,7 +37,9 @@ export default {
     väestönmäärä: 0,
     keskimääräinenpalkka: 0,
     bktData: {},
-    työttömyysData: {}
+    työttömyysData: {},
+    kuluttajaIndeksiData: {},
+    työpaikatjulkisellaData: {}
   }),
   methods: {
     removeEdge(edge) {
@@ -66,6 +70,8 @@ export default {
         this.keskimääräinenpalkka = this.$refs.fetchDataComponent.keskimääräinenpalkka
         this.bktData = this.$refs.fetchDataComponent.bktData
         this.työttömyysData = this.$refs.fetchDataComponent.työttömyysData
+        this.kuluttajaIndeksiData = this.$refs.fetchDataComponent.kuluttajaIndeksiData
+        this.työpaikatjulkisellaData = this.$refs.fetchDataComponent.työpaikatjulkisellaData
         //console.log('CSV data loaded:', this.csvData);
         this.data = convertCsvDataToSankeyData(this.csvData);
         this.dataAsNameAndValues = convertCSVDataToNameValuePair(this.csvData);

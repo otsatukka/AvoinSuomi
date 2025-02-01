@@ -26,7 +26,9 @@
         väestönmäärä: 0,
         keskimääräinenpalkka: 0,
         bktData: {},
-        työttömyysData: {}
+        työttömyysData: {},
+        kuluttajaIndeksiData: {},
+        työpaikatjulkisellaData: {}
       };
     },
     methods: {
@@ -164,10 +166,70 @@
                           value 
                         };
                       });
-             // console.log(this.työttömyysData)
                         
-
+              //Kuluttajahintaindeksi
+              const kuluttajahintaIndeksiHaku = await axios.get('/proxy', {
+                params: { 
+                  url: "https://pxdata.stat.fi:443/PxWeb/sq/9dbc43c7-81ff-493a-8cc0-c50906045b61"
+                },
+                responseType: 'arraybuffer' // Ensure the response is an ArrayBuffer
+              });
+              const kuluttajahintaindeksiText = decoder.decode(new Uint8Array(kuluttajahintaIndeksiHaku.data));
+              jsonObject = JSON.parse(kuluttajahintaindeksiText);    
+              if (jsonObject.data) {
+                  this.kuluttajaIndeksiData = Object.entries(
+                      jsonObject.data
+                          .reduce((acc, item) => {
+                              // Ensure 'item' has 'key' and 'values' properties
+                              if (item.key && item.values) {
+                                  acc[item.key] = parseFloat(item.values);
+                              }
+                              return acc;
+                          }, {})
+                  ).map(([key, value]) => {
+                      const year = parseInt(key.slice(0, 4));
+                      const month = parseInt(key.slice(5, 7)) - 1; 
+                      return { 
+                          year: new Date(year, month), 
+                          value 
+                      };
+                  });
+              } else {
+                  console.error("Data is undefined or not available");
+              }  
+              console.log(this.kuluttajaIndeksiData);
               
+              //Julkinen sektori työpaikat
+              const työpaikatjulkisellaHaku = await axios.get('/proxy', {
+                params: { 
+                  url: "https://pxdata.stat.fi:443/PxWeb/sq/c7d0bfbc-73a2-43f0-96f7-c1bc5ca34b5e"
+                },
+                responseType: 'arraybuffer' // Ensure the response is an ArrayBuffer
+              });
+              const työpaikatjulkisellaText = decoder.decode(new Uint8Array(työpaikatjulkisellaHaku.data));
+              jsonObject = JSON.parse(työpaikatjulkisellaText);    
+              if (jsonObject.data) {
+                  this.työpaikatjulkisellaData = Object.entries(
+                      jsonObject.data
+                          .reduce((acc, item) => {
+                              // Ensure 'item' has 'key' and 'values' properties
+                              if (item.key && item.values) {
+                                  acc[item.key] = parseFloat(item.values);
+                              }
+                              return acc;
+                          }, {})
+                  ).map(([key, value]) => {
+                      const year = parseInt(key.slice(0, 4));
+                      const month = parseInt(key.slice(5, 7)) - 1; 
+                      return { 
+                          year: new Date(year, month), 
+                          value: value*1000
+                      };
+                  });
+              } else {
+                  console.error("Data is undefined or not available");
+              }            
+              console.log(this.työpaikatjulkisellaData)
 
             this.$emit('data-loaded');
           } catch (error) {

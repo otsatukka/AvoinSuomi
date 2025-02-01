@@ -22,9 +22,9 @@ props: {
   data: Object
 },
 data: () => ({
-  width: 3680,
+  width: 4580,
   height: 400,
-  margins: {top: 20, right: 20, bottom: 651, left: 100},
+  margins: {top: 20, right: 20, bottom: 410, left: 100},
   percent: 90, // Default to 90 percent
   kokonaistulot: 0,
   kokonaismenot: 0,
@@ -70,10 +70,10 @@ methods: {
 
     // Rotate x-axis labels
     xAxis.selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-0.8em")
-      .attr("dy", "-.65em")
-      .attr("transform", "rotate(-90)");
+      .style("text-anchor", "start")
+      .attr("dx", ".4em")
+      .attr("dy", ".4em")
+      .attr("transform", "rotate(45)");
 
     // Add Y axis
     svg.append("g")

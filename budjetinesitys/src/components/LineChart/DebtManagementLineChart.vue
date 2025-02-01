@@ -40,7 +40,7 @@ import * as d3 from 'd3';
           .range([0, this.width]);
   
         const y = d3.scaleLinear()
-          .domain([0, d3.max(this.data, d => d.year<=2003 ? d.interestExpenses/6: d.interestExpenses)])
+          .domain([0, d3.max(this.data, d => d.year<=2003 ? d.interestExpenses: d.interestExpenses)])
           .range([this.height, 0]);
   
         // Add X axis
@@ -60,7 +60,7 @@ import * as d3 from 'd3';
           .attr('stroke-width', 1.5)
           .attr('d', d3.line()
             .x(d => x(d.year))
-            .y(d => y(d.year<=2003 ? d.interestExpenses/6: d.interestExpenses))
+            .y(d => y(d.year<=2003 ? d.interestExpenses: d.interestExpenses))
           );
   
         // Add labels if needed
