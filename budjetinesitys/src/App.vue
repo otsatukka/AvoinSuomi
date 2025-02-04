@@ -1,6 +1,7 @@
 <template>
   <div>
     <FetchData ref="fetchDataComponent" @data-loaded="onDataLoaded"></FetchData>
+    <OtherContext/>
     <LoanData :data="dataAsNameAndValues" :debtByYear="debtByYear" :debtManagementByYear="debtManagementByYear" :keskimääräinenpalkka="keskimääräinenpalkka" :väestönmäärä="väestönmäärä" v-if="dataAsNameAndValues"/>
     <DebtManagementLineChart :data="debtManagementByYear"  v-if="dataAsNameAndValues"/>
     <LineChart :data="bktData"  :title="'Bruttokansantuote euroissa'" v-if="dataAsNameAndValues" />
@@ -22,11 +23,12 @@ import DataHistogram from "./components/Histogram/DataHistogram.vue"
 import LoanData from './components/LoanData.vue';
 import DebtManagementLineChart from './components/LineChart/DebtManagementLineChart.vue'
 import LineChart from './components/LineChart/LineChart.vue'
+import OtherContext from './components/OtherContext.vue'
 import { convertCsvDataToSankeyData, convertCSVDataToNameValuePair } from './utils/dataConverter';
 
 export default {
   name: "App",
-  components: {LineChart, DebtManagementLineChart, LoanData, FetchData, SankeyMain, SankeyControls, DataHistogram },
+  components: {LineChart, DebtManagementLineChart, LoanData, FetchData, SankeyMain, SankeyControls, DataHistogram, OtherContext},
   data: () => ({
     data: null,
     dataAsNameAndValues: null,

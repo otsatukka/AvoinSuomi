@@ -197,7 +197,6 @@
               } else {
                   console.error("Data is undefined or not available");
               }  
-              console.log(this.kuluttajaIndeksiData);
               
               //Julkinen sektori työpaikat
               const työpaikatjulkisellaHaku = await axios.get('/proxy', {
@@ -229,7 +228,6 @@
               } else {
                   console.error("Data is undefined or not available");
               }            
-              console.log(this.työpaikatjulkisellaData)
 
             this.$emit('data-loaded');
           } catch (error) {
