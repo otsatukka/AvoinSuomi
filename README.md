@@ -22,3 +22,9 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+### deployment command in render
+```
+cd budjetinesitys && npm install && npm run build && cd ../budjetinesitysserveri && npm install && mkdir -p dist && cp -R ../budjetinesitys/dist/* dist/
+```
