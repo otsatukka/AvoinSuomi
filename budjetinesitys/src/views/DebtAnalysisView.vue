@@ -1,6 +1,6 @@
 <template>
     <div class="debt-analysis-view">
-      <h1>Debt Analysis</h1>
+      <h1>Velka-analyysi</h1>
       
       <div v-if="dataStore.isLoading" class="loading">
         Lataa dataa...
