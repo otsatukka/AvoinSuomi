@@ -28,3 +28,10 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ```
 cd budjetinesitys && npm install && npm run build && cd ../budjetinesitysserveri && npm install && mkdir -p dist && cp -R ../budjetinesitys/dist/* dist/
 ```
+# budjetinesitysserver
+
+### deployment locally
+```
+cd budjetinesitysserveri
+node server.js
+```
